@@ -17,10 +17,14 @@ process.env.DEBUG = 'actions-on-google:*';
 const App = require('actions-on-google').ApiAiApp;
 
 // [START YourAction]
-exports.yourAction = (request, response) => {
+exports.usStateCapitalQuiz = (request, response) => {
   const app = new App({request, response});
   console.log('Request headers: ' + JSON.stringify(request.headers));
   console.log('Request body: ' + JSON.stringify(request.body));
+
+  // Questions
+  let welcomeMessage = "Hello, welcome to U.S. Capital Quiz. I will give a state, you give the state capital. ";
+  let question = "What is the capital of Texas?"
 
   // Fulfill action business logic
   function responseHandler (app) {
@@ -28,8 +32,17 @@ exports.yourAction = (request, response) => {
     app.ask('Hello, World!');
   }
 
+  function welcomeWithQuestion (app) {
+    app.ask(welcomeMessage + question);
+  }
+
+  function questionAnswered (app) {
+    app.ask("Question answered!");
+  }
+
   const actionMap = new Map();
-  actionMap.set('<API.AI_action_name>', responseHandler);
+  actionMap.set('input.welcome', welcomeWithQuestion);
+  actionMap.set('question_answered', questionAnswered);
 
   app.handleRequest(actionMap);
 };
